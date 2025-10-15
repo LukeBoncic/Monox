@@ -1,8 +1,9 @@
 DISK = os.img
 KERNEL = kernel
-BOOTSECTOR = bootsector
+LOADER = loader.bin
+BOOTSECTOR = boot.bin
 
-ELF = kernel.elf library.elf trap.elf
+ELF = kernel.a library.a trap.a
 OBJ = kernel.o print.o trap.o
 
 DEPEND = debug.h library.h print.h trap.h
@@ -16,24 +17,24 @@ OBJCOPY = objcopy
 QEMU = qemu-system-x86_64
 
 run: $(DISK)
-	$(QEMU) -drive file=$(DISK),format=raw
 
 clean:
-	rm $(DISK) $(KERNEL) $(BOOTSECTOR) *.o *.elf *.bin
+	rm $(DISK) $(KERNEL) *.o *.a *.bin *.elf
 
-$(DISK): $(KERNEL) $(BOOTSECTOR)
+$(DISK): $(KERNEL) $(BOOTSECTOR) $(LOADER)
 	dd if=$(BOOTSECTOR) of=$(DISK) bs=512 count=1 conv=notrunc
-	dd if=$(KERNEL) of=$(DISK) bs=512 seek=1 conv=notrunc
+	dd if=$(LOADER) of=$(DISK) bs=512 seek=1 count=7 conv=notrunc
+	dd if=$(KERNEL) of=$(DISK) bs=512 seek=8 count=24 conv=notrunc
 	dd if=/dev/zero of=$(DISK) bs=512 seek=20479 count=1
 
-$(BOOTSECTOR): boot.asm
-	$(ASM) -f bin -o $(BOOTSECTOR) boot.asm
-
 $(KERNEL): $(ELF) $(OBJ)
-	$(LD) -nostdlib -T kernel.lds -o kernel.bin $(ELF) $(OBJ)
-	$(OBJCOPY) -O binary kernel.bin $(KERNEL)
+	$(LD) -nostdlib -T kernel.lds -o kernel.elf $(ELF) $(OBJ)
+	$(OBJCOPY) -O binary kernel.elf $(KERNEL)
 
-%.elf: %.asm
+%.bin: %.asm
+	$(ASM) -f bin -o $@ $<
+
+%.a: %.asm
 	$(ASM) -f elf64 -o $@ $<
 
 %.o: %.c $(DEPEND)
