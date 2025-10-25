@@ -66,17 +66,22 @@ protected_mode_entry:
 	mov ss, ax
 	mov esp, 0x7c00
 	cld
-	mov edi, 0x80000
+	mov edi, 0x70000
 	mov eax, 0
 	mov ecx, 0x4000
 	rep stosd
-	mov dword [0x80000], 0x81007
-	mov dword [0x81000], 135
+	mov dword [0x70000], 0x71003
+	mov dword [0x71000], 131
+	mov eax, 0xffff8000
+	shr eax, 7
+	and eax, 0x1ff
+	mov dword [0x70000+eax*8], 0x72003
+	mov dword [0x72000], 131
 	lgdt [gdt_64_pointer]
 	mov eax, cr4
 	or eax, 32
 	mov cr4, eax
-	mov eax, 0x80000
+	mov eax, 0x70000
 	mov cr3, eax
 	mov ecx, 0xc0000080
 	rdmsr
@@ -85,7 +90,19 @@ protected_mode_entry:
 	mov eax, cr0
 	or eax, 0x80000000
 	mov cr0, eax
-	jmp 8:0x10000
+	jmp 8:long_mode_entry
+
+[BITS 64]
+
+long_mode_entry:
+	mov rsp, 0x7c00
+	cld
+	mov rsi, 0x10000
+	mov rdi, 0x200000
+	mov rcx, 12288
+	rep movsb
+	mov rax, 0xffff800000200000
+	jmp rax	
 
 gdt_32:
 	dq 0

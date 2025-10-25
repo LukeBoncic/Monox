@@ -23,7 +23,7 @@ gdt_64_pointer:
 
 tss:
 	dd 0
-	dq 0x190000
+	dq 0xffff800000190000
 	times 88 db 0
 	dd tss_length
 
@@ -37,17 +37,19 @@ global start
 extern main
 
 start:
-	lgdt [gdt_64_pointer]
+	mov rax, gdt_64_pointer
+	lgdt [rax]
 
 set_tss:
 	mov rax, tss
-	mov [tss_descriptor+2], ax
+	mov rdi, tss_descriptor
+	mov [rdi+2], ax
 	shr rax, 16
-	mov [tss_descriptor+4], al
+	mov [rdi+4], al
 	shr rax, 8
-	mov [tss_descriptor+7], al
+	mov [rdi+7], al
 	shr rax, 8
-	mov [tss_descriptor+8], eax
+	mov [rdi+8], eax
 	mov ax, 0x20
 	ltr ax
 
@@ -78,17 +80,16 @@ init_pic:
 	out 0x21, al
 	mov al, 11111111b
 	out 0xa1, al
+	mov rax, kernel_entry
 	push 8
-	push kernel_entry
+	push rax
 	db 0x48
 	retf
 
 kernel_entry:
-	mov ax, 0
-	mov ss, ax
-	mov rsp, 0x8000
+	mov rsp, 0xffff800000200000
 	call main
-	sti
 
 end:
+	hlt
 	jmp end
