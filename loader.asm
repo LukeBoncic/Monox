@@ -1,7 +1,9 @@
 [BITS 16]
 [ORG 0x8000]
 
-load_kernel:
+start:
+	mov byte [drive_id], dl
+
 	mov si, read_packet
 	mov word [si], 0x10
 	mov word [si+2], 24
