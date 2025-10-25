@@ -4,6 +4,7 @@
 start:
 	mov byte [drive_id], dl
 
+load_kernel:
 	mov si, read_packet
 	mov word [si], 0x10
 	mov word [si+2], 24
