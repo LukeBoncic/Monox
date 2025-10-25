@@ -14,9 +14,10 @@ LD = ld
 
 OBJCOPY = objcopy
 
-QEMU = qemu-system-x86_64
+BOCHS = bochs
 
 run: $(DISK)
+	$(BOCHS)
 
 clean:
 	rm $(DISK) $(KERNEL) *.o *.a *.bin *.elf
