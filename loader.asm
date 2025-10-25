@@ -14,23 +14,25 @@ load_kernel:
 	jc error
 
 get_memory_map_info:
-	mov eax,0xe820
-	mov edx,0x534d4150
-	mov ecx,20
-	mov edi,0x9000
-	mov ebx,0
+	mov eax, 0xe820
+	mov edx, 0x534d4150
+	mov ecx, 20
+	mov dword [0x9000], 0
+	mov edi, 0x9008
+	mov ebx, 0
 	int 0x15
 	jc error
 
 get_memory_map:
-	add edi,20
-	mov eax,0xe820
-	mov edx,0x534d4150
-	mov ecx,20
+	add edi, 20
+	inc dword [0x9000]
+	test ebx, ebx
+	jz set_protected_mode
+	mov eax, 0xe820
+	mov edx, 0x534d4150
+	mov ecx, 20
 	int 0x15
-	jc set_protected_mode
-	test ebx,ebx
-	jnz get_memory_map
+	jnc get_memory_map
 
 set_protected_mode:
 	cli

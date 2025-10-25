@@ -4,7 +4,7 @@ LOADER = loader.bin
 BOOTSECTOR = boot.bin
 
 ELF = kernel.a library.a trap.a
-OBJ = kernel.o print.o trap.o
+OBJ = kernel.o memory.o print.o trap.o
 
 DEPEND = debug.h library.h print.h trap.h
 
