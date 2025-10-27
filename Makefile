@@ -6,7 +6,7 @@ BOOTSECTOR = boot.bin
 ELF = kernel.a library.a trap.a
 OBJ = kernel.o memory.o print.o trap.o
 
-DEPEND = debug.h library.h print.h trap.h
+DEPEND = debug.h library.h memory.h print.h trap.h
 
 CC = gcc
 ASM = nasm
