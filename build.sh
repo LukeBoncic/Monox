@@ -8,8 +8,8 @@ gcc -std=c99 -mcmodel=large -ffreestanding -fno-stack-protector -mno-red-zone -c
 gcc -std=c99 -mcmodel=large -ffreestanding -fno-stack-protector -mno-red-zone -c print.c 
 gcc -std=c99 -mcmodel=large -ffreestanding -fno-stack-protector -mno-red-zone -c debug.c 
 gcc -std=c99 -mcmodel=large -ffreestanding -fno-stack-protector -mno-red-zone -c memory.c 
-ld -nostdlib -T link.lds -o kernel kernel.o main.o trapa.o trap.o liba.o print.o debug.o memory.o
-objcopy -O binary kernel kernel.bin 
+ld -nostdlib -T link.lds -o kernel.elf kernel.o main.o trapa.o trap.o liba.o print.o debug.o memory.o
+objcopy -O binary kernel.elf kernel.bin 
 dd if=/dev/zero of=boot.img bs=512 count=20480 conv=notrunc
 dd if=boot.bin of=boot.img bs=512 count=1 conv=notrunc
 dd if=loader.bin of=boot.img bs=512 count=5 seek=1 conv=notrunc
