@@ -1,2 +1,1 @@
-# Monox
-64-Bit Operating System
+Monox is currently in development...
