@@ -1,7 +1,12 @@
 #include "trap.h"
+#include "print.h"
+#include "syscall.h"
+#include "process.h"
+#include "debug.h"
 
 static struct IdtPtr idt_pointer;
 static struct IdtEntry vectors[256];
+static uint64_t ticks;
 
 static void init_idt_entry(struct IdtEntry *entry, uint64_t addr, uint8_t attribute)
 {
@@ -34,10 +39,22 @@ void init_idt(void)
     init_idt_entry(&vectors[19],(uint64_t)vector19,0x8e);
     init_idt_entry(&vectors[32],(uint64_t)vector32,0x8e);
     init_idt_entry(&vectors[39],(uint64_t)vector39,0x8e);
+    init_idt_entry(&vectors[0x80],(uint64_t)sysint,0xee);
 
     idt_pointer.limit = sizeof(vectors)-1;
     idt_pointer.addr = (uint64_t)vectors;
     load_idt(&idt_pointer);
+}
+
+uint64_t get_ticks(void)
+{
+    return ticks;
+}
+
+static void timer_handler(void)
+{
+    ticks++;
+    wake_up(-1);
 }
 
 void handler(struct TrapFrame *tf)
@@ -45,7 +62,8 @@ void handler(struct TrapFrame *tf)
     unsigned char isr_value;
 
     switch (tf->trapno) {
-        case 32:
+        case 32:  
+            timer_handler();   
             eoi();
             break;
             
@@ -56,7 +74,21 @@ void handler(struct TrapFrame *tf)
             }
             break;
 
+        case 0x80:                   
+            system_call(tf);
+            break;
+
         default:
-            while (1) { }
+            if ((tf->cs & 3) == 3) {
+                printk("Exception is %d\n", tf->trapno);
+                exit();
+            }
+            else {                                                                                                        
+                while (1) { }
+            }
+    }
+
+    if (tf->trapno == 32) {       
+        yield();
     }
 }
