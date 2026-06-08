@@ -22,13 +22,12 @@ void init_memory(void)
     ASSERT(count <= 50);
 
 	for(int32_t i = 0; i < count; i++) {        
-        if(mem_map[i].type == 1) {			
-            free_mem_region[free_region_count].address = mem_map[i].address;
-            free_mem_region[free_region_count].length = mem_map[i].length;
-            total_mem += mem_map[i].length;
-            free_region_count++;
-        }
-        printk("%x  %uKB  %u\n",mem_map[i].address,mem_map[i].length/1024,(uint64_t)mem_map[i].type);
+            if(mem_map[i].type == 1) {			
+                free_mem_region[free_region_count].address = mem_map[i].address;
+                free_mem_region[free_region_count].length = mem_map[i].length;
+                total_mem += mem_map[i].length;
+                free_region_count++;
+            }
 	}
 
     for (int i = 0; i < free_region_count; i++) {                  
@@ -43,8 +42,7 @@ void init_memory(void)
         }       
     }
     
-    memory_end = (uint64_t)free_memory.next+PAGE_SIZE;   
-    printk("%x\n",memory_end);
+    memory_end = (uint64_t)free_memory.next+PAGE_SIZE; 
 }
 
 uint64_t get_total_memory(void)

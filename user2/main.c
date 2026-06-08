@@ -64,7 +64,7 @@ int main(void)
     int cmd = 0;
 
     while (1) {
-        printf("shell# ");
+        printf("> ");
         buffer_size = read_cmd(buffer);
 
         if (buffer_size == 0) {
@@ -74,7 +74,7 @@ int main(void)
         cmd = parse_cmd(buffer, buffer_size);
         
         if (cmd < 0) {
-            printf("Command Not Found!\n");
+            printf("Command Not Found\n");
         }
         else {
             execute_cmd(cmd);             
