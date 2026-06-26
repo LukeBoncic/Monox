@@ -5,6 +5,8 @@ LD = ld
 CC_FLAGS = -std=c99 -mcmodel=large -ffreestanding -fno-stack-protector -mno-red-zone -c
 LD_FLAGS = -nostdlib
 
+FREE_LOOP = $(notdir $(shell losetup -f))
+
 MONOX_IMG = monox.img
 
 BOOT_BIN = boot/boot.bin
@@ -37,18 +39,19 @@ clean:
 	find . -name "*.out" -type f -delete
 
 $(MONOX_IMG): $(KERNEL_BIN) $(BOOT_BIN) $(LOADER_BIN) $(SHELL_BIN) $(TOTALMEM)
-	dd if=/dev/zero of=boot.img bs=512 count=20160
-	mkfs.vfat -F 16 -R 16 -n "Monox" boot.img 
-	dd if=$(BOOT_BIN) of=boot.img bs=1 count=3 conv=notrunc
-	dd if=boot.img of=$(BOOT_BIN) bs=1 count=54 conv=notrunc
+	dd if=/dev/zero of=boot.img bs=512 count=204624
 	dd if=$(BOOT_BIN) of=boot.img bs=512 count=1 conv=notrunc
 	dd if=$(LOADER_BIN) of=boot.img bs=512 seek=1 count=15 conv=notrunc
 	mkdir os
-	sudo mount boot.img os
+	sudo losetup /dev/$(FREE_LOOP) boot.img
+	sudo kpartx -av /dev/$(FREE_LOOP)
+	sudo mkfs.vfat -F 16 -R 16 -n "Monox" /dev/mapper/$(FREE_LOOP)p1
+	sudo mount /dev/mapper/$(FREE_LOOP)p1 os
 	sudo cp $(KERNEL_BIN) os/kernel.bin
-	sudo cp $(SHELL_BIN) os/user.bin
+	sudo cp $(SHELL_BIN) os/shell.bin
 	sudo cp $(TOTALMEM) os/totalmem
-	sudo umount boot.img
+	sudo umount /dev/mapper/$(FREE_LOOP)p1
+	sudo kpartx -dv /dev/$(FREE_LOOP)
 	cp boot.img $(MONOX_IMG)
 	rm -r os boot.img
 

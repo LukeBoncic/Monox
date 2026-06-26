@@ -210,10 +210,5 @@ int load_file(char *path, uint64_t addr)
 void init_fs(void)
 {
     uint8_t *p = (uint8_t*)get_fs_bpb();
-    
-    if (p[0x1fe] != 0x55 || p[0x1ff] != 0xaa) {
-        printk("invalid signature\n");
-        ASSERT(0);
-    }
 }
 
