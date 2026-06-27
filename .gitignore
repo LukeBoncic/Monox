@@ -4,3 +4,4 @@
 *.elf
 *.img
 *.out
+programs/totalmem/totalmem
