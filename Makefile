@@ -21,7 +21,7 @@ KERNEL_HEADERS = kernel/debug.h kernel/file.h kernel/keyboard.h kernel/lib.h ker
 LOADER_HEADERS = boot/debug.h boot/file.h boot/lib.h boot/print.h
 LIB_HEADERS = lib/lib.h
 
-KERNEL_OBJECTS = kernel/lib.out kernel/trap.out kernel/kernel.out kernel/main.o kernel/trap.o kernel/print.o kernel/debug.o kernel/memory.o kernel/process.o kernel/syscall.o kernel/lib.o kernel/keyboard.o kernel/file.o
+KERNEL_OBJECTS = kernel/kernel.out kernel/main.o kernel/trap.out kernel/trap.o kernel/lib.out kernel/print.o kernel/debug.o kernel/memory.o kernel/process.o kernel/syscall.o kernel/lib.o kernel/keyboard.o kernel/file.o
 LOADER_OBJECTS = boot/entry.out boot/lib.out boot/debug.o boot/file.o boot/main.o boot/print.o
 LIB_OBJECTS = lib/print.o lib/syscall.out lib/lib.out
 SHELL_OBJECTS = shell/start.out shell/main.o shell/print.o
