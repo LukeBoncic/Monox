@@ -3,26 +3,26 @@ ENTRY(start)
 
 SECTIONS
 {
-    . = 0xffff800000200000;
+	. = 0xffff800000200000;
 	
-    .text : {
-        *(.text)
-    }
+	.text : {
+		*(.text)
+	}
 
-    .rodata : {
-        *(.rodata)
-    }
+	.rodata : {
+		*(.rodata)
+	}
 
-    . = ALIGN(16);
-    .data : {
-        *(.data)
-    }
+	. = ALIGN(16);
+	.data : {
+		*(.data)
+	}
 
-    .bss : {
-        PROVIDE(bss_start = .);
-        *(.bss)
-        PROVIDE(bss_end = .);
-    }
-    
-    PROVIDE(end = .);
+	.bss : {
+		PROVIDE(bss_start = .);
+		*(.bss)
+		PROVIDE(bss_end = .);
+	}
+	
+	PROVIDE(end = .);
 }
