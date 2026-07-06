@@ -54,8 +54,8 @@ End:
 	hlt	
 	jmp End
 	
-DriveId:	db 0
-Message:	db "We have an error in boot process"
+DriveId: db 0
+Message: db "We have an error in boot process"
 MessageLen: equ $-Message
 ReadPacket: times 16 db 0
 

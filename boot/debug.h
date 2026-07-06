@@ -3,8 +3,8 @@
 
 #include "stdint.h"
 
-#define ASSERT(e) do {				  \
-	if (!(e))						   \
+#define ASSERT(e) do { \
+	if (!(e)) \
 		error_check(__FILE__,__LINE__); \
 } while (0) 
 
