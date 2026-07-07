@@ -1,13 +1,6 @@
 [BITS 16]
 [ORG 0x7c00]
 
-jump:
-    jmp short start
-    nop
-
-bpb:
-    times 51 db 0
-
 start:
     xor ax,ax   
     mov ds,ax
@@ -38,7 +31,7 @@ LoadLoader:
     jc  ReadError
 
     mov dl,[DriveId]
-    jmp 0x7e00 
+    jmp 0x0000:0x7e00 
 
 ReadError:
 NotSupport:
