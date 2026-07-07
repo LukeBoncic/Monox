@@ -204,7 +204,7 @@ PMEntry:
     mov ds,ax
     mov es,ax
     mov ss,ax
-    mov esp,0x7c00
+    mov esp,0x90000
 
     cld
     mov edi,0x70000
@@ -246,7 +246,7 @@ PEnd:
 
 [BITS 64]
 LMEntry:
-    mov rsp,0x7c00
+    mov rsp,0x90000
 
     cld
     mov rdi,0x100000
