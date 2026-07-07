@@ -3,22 +3,22 @@ ENTRY(start)
 
 SECTIONS
 {
-	. = 0xffff800000100000;
+    . = 0xffff800000100000;
 	
-	.text : {
-		*(.text)
-	}
+    .text : {
+        *(.text)
+    }
 
-	.rodata : {
-		*(.rodata)
-	}
+    .rodata : {
+        *(.rodata)
+    }
 
-	. = ALIGN(16);
-	.data : {
-		*(.data)
-	}
+    . = ALIGN(16);
+    .data : {
+        *(.data)
+    }
 
-	.bss : {
-		*(.bss)
-	}
+    .bss : {
+        *(.bss)
+    }
 }

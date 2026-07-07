@@ -4,6 +4,6 @@ extern main
 extern exitu
 
 start:
-	call main
-	call exitu
-	jmp $
+    call main
+    call exitu
+    jmp $
