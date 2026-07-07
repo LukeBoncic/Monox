@@ -6,7 +6,6 @@ CC_FLAGS = -std=c99 -mcmodel=large -ffreestanding -fno-stack-protector -mno-red-
 LD_FLAGS = -nostdlib
 
 FREE_LOOP = $(notdir $(shell sudo losetup -f))
-
 MONOX_IMG = monox.img
 
 BOOT_BIN = boot/boot.bin
@@ -21,7 +20,7 @@ KERNEL_HEADERS = kernel/debug.h kernel/file.h kernel/keyboard.h kernel/lib.h ker
 LOADER_HEADERS = boot/debug.h boot/file.h boot/lib.h boot/print.h
 LIB_HEADERS = lib/lib.h
 
-KERNEL_OBJECTS = kernel/kernel.out kernel/lib.out kernel/trap.out kernel/main.o kernel/trap.o kernel/print.o kernel/debug.o kernel/memory.o kernel/process.o kernel/syscall.o kernel/lib.o kernel/keyboard.o kernel/file.o
+KERNEL_OBJECTS = kernel/kernel.out kernel/main.o kernel/trap.out kernel/trap.o kernel/lib.out kernel/print.o kernel/debug.o kernel/memory.o kernel/process.o kernel/syscall.o kernel/lib.o kernel/keyboard.o kernel/file.o
 LOADER_OBJECTS = boot/entry.out boot/lib.out boot/debug.o boot/file.o boot/main.o boot/print.o
 LIB_OBJECTS = lib/print.o lib/syscall.out lib/lib.out
 SHELL_OBJECTS = shell/start.out shell/main.o shell/print.o
@@ -42,18 +41,17 @@ clean:
 $(MONOX_IMG): $(KERNEL_BIN) $(BOOT_BIN) $(LOADER_BIN) $(SHELL_BIN) $(TOTALMEM)
 	dd if=/dev/zero of=boot.img bs=512 count=204624
 	dd if=$(BOOT_BIN) of=boot.img bs=512 count=1 conv=notrunc
-	dd if=$(LOADER_BIN) of=boot.img bs=12 seek=1 count=15 conv=notrunc
-	mkdir os
+	dd if=$(LOADER_BIN) of=boot.img bs=512 seek=1 count=15 conv=notrunc
 	sudo losetup /dev/$(FREE_LOOP) boot.img
 	sudo kpartx -av /dev/$(FREE_LOOP)
 	sudo mkfs.vfat -F 16 -R 16 -n "Monox" /dev/mapper/$(FREE_LOOP)p1
+	mkdir os
 	sudo mount /dev/mapper/$(FREE_LOOP)p1 os
 	sudo cp $(KERNEL_BIN) os/kernel.bin
 	sudo cp $(SHELL_BIN) os/shell.bin
 	sudo cp $(TOTALMEM) os/totalmem
 	sudo umount /dev/mapper/$(FREE_LOOP)p1
 	sudo kpartx -dv /dev/$(FREE_LOOP)
-	sudo losetup -d /dev/$(FREE_LOOP)
 	cp boot.img $(MONOX_IMG)
 	rm -r os boot.img
 
