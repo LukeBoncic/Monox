@@ -37,6 +37,7 @@ clean:
 	find . -name "*.elf" -type f -delete
 	find . -name "*.img" -type f -delete
 	find . -name "*.out" -type f -delete
+	rm $(TOTATLMEM)
 
 $(MONOX_IMG): $(KERNEL_BIN) $(BOOT_BIN) $(LOADER_BIN) $(SHELL_BIN) $(TOTALMEM)
 	dd if=/dev/zero of=boot.img bs=512 count=204624
