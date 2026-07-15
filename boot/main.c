@@ -4,7 +4,7 @@
 
 void EMain(void)
 {
-   init_fs();
-   ASSERT(load_file("KERNEL.BIN", 0x200000) == 0);
-   ASSERT(load_file("SHELL.BIN", 0x30000) == 0);
+	init_fs();
+	ASSERT(load_file("KERNEL.BIN", 0x200000) == 0);
+	ASSERT(load_file("SHELL.BIN", 0x30000) == 0);
 }
