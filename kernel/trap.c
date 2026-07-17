@@ -87,7 +87,7 @@ void handler(struct TrapFrame *tf)
 
 		default:
 			if ((tf->cs & 3) == 3) {
-				printk("Exception is %d\n", tf->trapno);
+				print("Exception is %d\n", tf->trapno);
 				exit();
 			}
 			else {

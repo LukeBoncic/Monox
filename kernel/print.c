@@ -1,10 +1,12 @@
 #include "stdint.h"
 #include "stdarg.h"
+
+#include "keyboard.h"
 #include "print.h"
 #include "lib.h"
 #include "memory.h"
 
-static struct ScreenBuffer screen_buffer = {(char*)P2V(0xb8000), 0, 0};
+struct ScreenBuffer screen_buffer = {(char*)P2V(0xb8000), 0, 0};
 
 static int udecimal_to_string(char *buffer, int position, uint64_t digits)
 {
@@ -79,7 +81,7 @@ void write_screen(const char *buffer, int size, char color)
 		if (buffer[i] == '\n') {	 
 			column = 0;
 			row++;
-		}	   
+		}  
 		else if (buffer[i] == '\b') { 
 			if (column == 0 && row == 0) {
 				continue;
@@ -91,10 +93,10 @@ void write_screen(const char *buffer, int size, char color)
 			}
 
 			column -= 1;
-			sb->buffer[column*2+row*LINE_SIZE] = 0;
-			sb->buffer[column*2+row*LINE_SIZE+1] = 0;  
+			sb->buffer[column*2 + row*LINE_SIZE] = ' ';
+			sb->buffer[column*2 + row*LINE_SIZE + 1] = color; 
 		}
-		else {		 
+		else {
 			sb->buffer[column*2+row*LINE_SIZE] = buffer[i];
 			sb->buffer[column*2+row*LINE_SIZE+1] = color;
 			column++;
@@ -114,11 +116,12 @@ void write_screen(const char *buffer, int size, char color)
 
 	sb->column = column;
 	sb->row = row;
+	move_cursor(sb->row, sb->column);
 }
 
-int printk(const char *format, ...)
+int print(const char *format, ...)
 {
-	char buffer[1024];
+	char buffer[4096];
 	int buffer_size = 0;
 	int64_t integer = 0;
 	char *string = 0;

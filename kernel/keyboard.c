@@ -26,8 +26,19 @@ static char shift_key_map[256] = {
 	'V', 'B', 'N', 'M', '<', '>', '?', 0, '*', 0, ' '
 };
 
-static struct KeyboardBuffer key_buffer = { {0}, 0, 0, 500 };
+static struct KeyboardBuffer key_buffer = { {0}, 0, 0, 4096 };
 static unsigned int flag;
+
+void move_cursor(int row, int column)
+{
+	uint16_t pos = row * 80 + column;
+
+	outb(0x3D4, 0x0F);
+	outb(0x3D5, pos & 0xFF);
+
+	outb(0x3D4, 0x0E);
+	outb(0x3D5, (pos >> 8) & 0xFF);
+}
 
 static void write_key_buffer(char ch)
 {
@@ -38,9 +49,11 @@ static void write_key_buffer(char ch)
 	if ((end + 1) % size == front) {
 		return;
 	}
+	
 	key_buffer.buffer[end++] = ch;
 	key_buffer.end = end % size;
 }
+
 
 char read_key_buffer(void)
 {
@@ -59,7 +72,7 @@ static char keyboard_read(void)
 	unsigned char scan_code;
 	char ch;
 
-	scan_code = in_byte(0x60);
+	scan_code = inb(0x60);
 	
 	if (scan_code == 0xE0) {
 		flag |= E0_SIGN;   

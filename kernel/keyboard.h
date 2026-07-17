@@ -4,7 +4,7 @@
 #include "stdint.h"
 
 struct KeyboardBuffer {
-	char buffer[500];
+	char buffer[4096];
 	int front;
 	int end;
 	int size;
@@ -16,6 +16,9 @@ struct KeyboardBuffer {
 
 char read_key_buffer(void);
 void keyboard_handler(void);
-unsigned char in_byte(uint16_t port);
+void move_cursor(int row, int column);
+
+void outb(uint16_t port, uint8_t byte);
+uint8_t inb(uint16_t port);
 
 #endif

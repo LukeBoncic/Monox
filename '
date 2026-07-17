@@ -8,11 +8,8 @@ static int read_cmd(char *buffer)
 
 	while (1) {
 		ch[0] = keyboard_readu();
-		if (buffer_size >= 1023) {
-               		printf("%s\n",ch);
-                	break;
-                }
-		if (ch[0] == '\n') {
+		
+		if (ch[0] == '\n' || buffer_size > 80) {
 			printf("%s",ch);
 			break;
 		}
@@ -27,7 +24,7 @@ static int read_cmd(char *buffer)
 			printf("%s",ch);		
 		}
 	}
-	buffer[buffer_size] = '\0';
+
 	return buffer_size;
 }
 

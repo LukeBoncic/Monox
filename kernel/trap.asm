@@ -32,7 +32,8 @@ global read_cr2
 global read_cr3
 global swap
 global TrapReturn
-global in_byte
+global inb
+global outb
 
 Trap:
 	push rax
@@ -231,9 +232,14 @@ swap:
 	
 	ret 
 
-in_byte:
+inb:
 	mov rdx,rdi
 	in al,dx
-	ret   
+	ret
 
-
+outb:
+	mov dx,di
+	mov al,sil
+	out dx,al
+	ret
+ 
