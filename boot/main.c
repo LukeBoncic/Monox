@@ -2,7 +2,7 @@
 #include "file.h"
 #include "debug.h"
 
-void EMain(void)
+void main(void)
 {
 	init_fs();
 	ASSERT(load_file("KERNEL.BIN", 0x200000) == 0);

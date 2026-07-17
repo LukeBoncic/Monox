@@ -8,7 +8,7 @@
 extern char bss_start;
 extern char bss_end;
 
-void KMain(void)
+void main(void)
 { 
 	uint64_t size = (uint64_t)&bss_end - (uint64_t)&bss_start;
 	memset(&bss_start, 0, size);

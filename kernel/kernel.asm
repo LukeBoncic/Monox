@@ -1,3 +1,4 @@
+section .note.GNU-stack noalloc noexec nowrite progbits
 section .data
 global Tss
 
@@ -29,7 +30,7 @@ Tss:
 TssLen: equ $-Tss
 
 section .text
-extern KMain
+extern main
 global start
 
 start:
@@ -93,7 +94,7 @@ KernelEntry:
 	mov ss,ax
 	
 	mov rsp,0xffff800000200000
-	call KMain
+	call main
 	
 End:
 	sti
