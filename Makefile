@@ -27,7 +27,7 @@ SHELL_OBJECTS = shell/start.out shell/main.o shell/print.o
 TOTALMEM_OBJECTS = programs/totalmem/start.out programs/totalmem/main.o
 
 all: $(MONOX_IMG)
-	bochs
+	bochs -q
 
 clean:
 	find . -name "*.o" -type f -delete

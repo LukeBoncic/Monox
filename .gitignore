@@ -5,3 +5,4 @@
 *.img
 *.out
 programs/totalmem/totalmem
+.vscode
