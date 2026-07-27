@@ -6,6 +6,6 @@
 
 void error_check(char *file, int line)
 {
-	printk("Assertion Failed [file %s: line %u]", file, line);
+	print("Assertion Failed [file %s: line %u]", file, line);
 	while (1) { }
 }

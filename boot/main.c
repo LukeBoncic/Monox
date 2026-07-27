@@ -4,7 +4,6 @@
 
 void main(void)
 {
-	init_fs();
-	ASSERT(load_file("KERNEL.BIN", 0x200000) == 0);
-	ASSERT(load_file("SHELL.BIN", 0x30000) == 0);
+	assert(load_file("KERNEL.BIN", 0x200000, file_globals) == 0);
+	assert(load_file("SHELL.BIN", 0x30000, file_globals) == 0);
 }
