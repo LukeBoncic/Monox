@@ -3,7 +3,7 @@
 [BITS 16]
 [ORG 0x7c00]
 
-; Reset segment registers that were set to unknown values by the UEFI
+; Reset segment registers that were set to unknown values by the BIOS
 ; and set the stack pointer to where the master boot record is loaded
 start:
 	xor ax, ax  
