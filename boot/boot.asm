@@ -1,63 +1,70 @@
+; Master boot record is loaded at 0x7c00
+
 [BITS 16]
 [ORG 0x7c00]
 
+; Reset segment registers that were set to unknown values by the UEFI
+; and set the stack pointer to where the master boot record is loaded
 start:
-	xor ax,ax   
-	mov ds,ax
-	mov es,ax  
-	mov ss,ax
-	mov sp,0x7c00
+	xor ax, ax  
+	mov ds, ax
+	mov es, ax
+	mov ss, ax
+	mov sp, 0x7c00
 
-TestDiskExtension:
-	mov [DriveId],dl
-	mov ah,0x41
-	mov bx,0x55aa
+; Test if the disk extension service is available
+test_disk_extension:
+	mov [drive_id], dl
+	mov ah, 0x41
+	mov bx, 0x55aa
 	int 0x13
-	jc NotSupport
-	cmp bx,0xaa55
-	jne NotSupport
+	jc error
+	cmp bx, 0xaa55
+	jne error
 
-LoadLoader:
-	mov si,ReadPacket
-	mov word[si],0x10
-	mov word[si+2],15
-	mov word[si+4],0x7e00
-	mov word[si+6],0
-	mov dword[si+8],1
-	mov dword[si+0xc],0
-	mov dl,[DriveId]
+; Load the 15 reserved sectors from the boot drive into 0x7e00,
+; then jump to that address and run the second stage bootloader
+load_second_stage:
+	mov si, read_packet
+	mov word [si], 0x10
+	mov word [si+2], 15
+	mov word [si+4], 0x7e00
+	mov word [si+6], 0
+	mov dword [si+8], 1
+	mov dword [si+-12], 0
+	mov dl, [drive_id]
 	mov ah,0x42
 	int 0x13
-	jc  ReadError
-
-	mov dl,[DriveId]
+	jc error
+	mov dl, [drive_id]
 	jmp 0x0000:0x7e00 
 
-ReadError:
-NotSupport:
-	mov ah,0x13
-	mov al,1
-	mov bx,0xa
-	xor dx,dx
-	mov bp,Message
-	mov cx,MessageLen 
+; If the disk read throws an error, we jump here
+error:
+	mov ah, 0x13
+	mov al, 1
+	mov bx, 0xa
+	xor dx, dx
+	mov bp, message
+	mov cx, message_length
 	int 0x10
 
-End:
-	hlt	
-	jmp End
+; And enter an infinite loop
+end:
+	jmp end
 	
-DriveId: db 0
-Message: db "We have an error in boot process"
-MessageLen: equ $-Message
-ReadPacket: times 16 db 0
+drive_id: db 0
+message: db "Could not load reserved sectors"
+message_length: equ $ - message
+read_packet: times 16 db 0
 
-times (0x1be-($-$$)) db 0
+padding: times (0x1be - ($ - $$)) db 0
 
+partition_table:
 	db 80h
-	db 1,1,0
+	db 1, 1, 0
 	db 06h
-	db 0fh,03fh,0cah
+	db 0fh, 03fh, 0cah
 	dd 3fh
 	dd 031f11h
 	
