@@ -38,6 +38,16 @@ clean:
 	find . -name "*.out" -type f -delete
 	find . -wholename "$(TOTALMEM)" -type f -delete
 
+setup:
+	ifeq ($(shell command -v pacman >/dev/null 2>&1 && echo yes),yes)
+		sudo pacman -Sy --needed gcc binutils nasm make dosfstools multipath-tools bochs
+	else ifeq ($(shell command -v apt >/dev/null 2>&1 && echo yes),yes)
+		sudo apt update
+		sudo apt install -y build-essential binutils nasm dosfstools kpartx bochs bochs-sdl
+	else
+		@echo "Could not find your package manager"
+		exit 1
+	endif
 $(MONOX_IMG): $(KERNEL_BIN) $(BOOT_BIN) $(LOADER_BIN) $(SHELL_BIN) $(TOTALMEM)
 	dd if=/dev/zero of=boot.img bs=512 count=204624
 	dd if=$(BOOT_BIN) of=boot.img bs=512 count=1 conv=notrunc
@@ -69,11 +79,11 @@ $(LIB_A): $(LIB_OBJECTS)
 	ar rcs $(LIB_A) $(LIB_OBJECTS)
 
 $(SHELL_BIN): $(SHELL_OBJECTS) $(LIB_A)
-	$(LD) $(LDFLAGS) -T shell/link.lds -o shell/shell.elf $(SHELL_OBJECTS) $(LIB_A)
+	$(LD) $(LD_FLAGS) -T shell/link.lds -o shell/shell.elf $(SHELL_OBJECTS) $(LIB_A)
 	objcopy -O binary shell/shell.elf $(SHELL_BIN)
 
 $(TOTALMEM): $(TOTALMEM_OBJECTS) $(LIB_A) 
-	$(LD) $(LDFLAGS) -T programs/totalmem/link.lds -o programs/totalmem/totalmem.elf $(TOTALMEM_OBJECTS) $(LIB_A)
+	$(LD) $(LD_FLAGS) -T programs/totalmem/link.lds -o programs/totalmem/totalmem.elf $(TOTALMEM_OBJECTS) $(LIB_A)
 	objcopy -O binary programs/totalmem/totalmem.elf $(TOTALMEM)
 
 $(BOOT_BIN): boot/boot.asm
@@ -82,5 +92,5 @@ $(BOOT_BIN): boot/boot.asm
 %.out: %.asm
 	$(ASM) -f elf64 -o $@ $<
 
-%.o: %.c $(KERNEL_HEADERS) $(LOADER_HEADERS) $(LIB_HEADERS) $(SHELL_HEADERS)
+%.o: %.c $(KERNEL_HEADERS) $(LOADER_HEADERS) $(LIB_HEADERS)
 	$(CC) $(CC_FLAGS) -o $@ $<
